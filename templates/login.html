@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autentificare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Autentificare</h2>
+        <form method="POST" action="/send_code" id="authForm">
+            <label for="email">Email:</label>
+            <input type="email" name="email" required><br>
+            
+            <label for="password">Parola:</label>
+            <input type="password" name="password" required><br>
+            
+            <input type="submit" value="Trimite cod pe email">
+        </form>
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifică Codul</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Introdu codul primit pe email</h2>
+        <form method="POST" action="/verify_code" id="verifyForm">
+            <label for="code">Cod:</label>
+            <input type="text" name="code" required><br>
+            
+            <input type="submit" value="Verifică">
+        </form>
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/verify.js') }}"></script>
+</body>
+</html>

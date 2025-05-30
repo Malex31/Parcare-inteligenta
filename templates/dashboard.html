@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Link către fișierul CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Administrare parcare</h1>
+
+    <!-- Mesaje flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="alert {{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Formular adăugare mașină -->
+    <h2>Adaugă mașină</h2>
+    <form method="POST" action="/add_car">
+        <label for="plate">Număr înmatriculare:</label>
+        <input type="text" id="plate" name="plate" required placeholder="Ex: B123XYZ">
+
+        <label for="name">Nume proprietar:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="function">Funcție:</label>
+        <input type="text" id="function" name="function" required>
+
+        <button type="submit">Adaugă mașină</button>
+    </form>
+
+    <!-- Lista mașinilor -->
+    <h2>Mașinile tale</h2>
+    {% if cars %}
+        <table>
+            <tr>
+                <th>Număr</th>
+                <th>Nume</th>
+                <th>Funcție</th>
+                <th>Acțiuni</th>
+            </tr>
+            {% for car in cars %}
+            <tr id="car-{{ car.id }}">
+                <td>{{ car.nrinmatriculare }}</td>
+                <td>{{ car.nume }}</td>
+                <td>{{ car.functie }}</td>
+                <td>
+                    <button onclick="confirmDelete({{ car.id }})">Șterge</button>
+                    <button onclick="editCar({{ car.id }})">Editează</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="empty">Nu ai adăugat încă nicio mașină.</p>
+    {% endif %}
+</div>
+
+<!-- Modal -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h2>Confirmați ștergerea</h2>
+        <p>Sunteți sigur că doriți să ștergeți această mașină?</p>
+        <button id="confirmBtn" class="btn confirm">Da</button>
+        <button id="cancelBtn" class="btn cancel">Anulează</button>
+    </div>
+</div>
+
+<!-- Buton logout -->
+<form action="/logout" method="get" onsubmit="return confirmLogout();">
+    <button type="submit" class="logout-btn">Deconectare</button>
+</form>
+
+<!-- Script JS -->
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

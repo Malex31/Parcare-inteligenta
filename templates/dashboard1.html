@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        /* Stiluri pentru întreaga pagină */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            padding-top: 30px;
+        }
+
+        /* Containerul principal */
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Stil pentru mesajele flash */
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .alert.success {
+            background-color: #4CAF50; /* Verde pentru succes */
+            color: white;
+        }
+
+        .alert.error {
+            background-color: #f44336; /* Roșu pentru erori */
+            color: white;
+        }
+
+        .alert.info {
+            background-color: #2196F3; /* Albastru pentru informații */
+            color: white;
+        }
+
+        /* Stiluri pentru formular */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Stilizarea pentru lista de mesaje */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Administrare parcare</h1>
+
+        <!-- Mesaje flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for category, message in messages %}
+                        <li class="alert {{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Formularul pentru adăugarea mașinii -->
+        <h2>Adaugă mașină</h2>
+        <form method="POST" action="/add_car">
+            <label for="plate">Număr înmatriculare:</label>
+            <input type="text" id="plate" name="plate" required>
+
+            <label for="name">Nume proprietar:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="function">Funcție:</label>
+            <input type="text" id="function" name="function" required>
+
+            <button type="submit">Adaugă mașină</button>
+        </form>
+
+
+
+<h2>Mașinile tale</h2>
+{% if cars %}
+    <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <tr style="background-color: #f2f2f2;">
+            <th>Număr înmatriculare</th>
+            <th>Nume</th>
+            <th>Funcție</th>
+            <th>Acțiuni</th>
+        </tr>
+        {% for car in cars %}
+        <tr id="car-{{ car.id }}">
+            <td>{{ car.nrinmatricuolare }}</td>
+            <td>{{ car.nume }}</td>
+            <td>{{ car.functie }}</td>
+            <td>
+                <button onclick="confirmDelete({{ car.id }})" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                    Șterge
+                </button>
+
+
+		<!-- Buton pentru editare -->
+                <button onclick="editCar({{ car.id }})" style="background-color: #4CAF50; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-left: 10px;">
+                    Editează
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p style="text-align:center; color: #888;">Nu ai adăugat încă nicio mașină.</p>
+{% endif %}
+
+<!-- Modal de confirmare -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h2>Confirmați ștergerea</h2>
+        <p>Sunteți sigur că doriți să ștergeți această mașină?</p>
+        <button id="confirmBtn" class="btn confirm">Da</button>
+        <button id="cancelBtn" class="btn cancel">Anulează</button>
+    </div>
+</div>
+
+<!-- Stiluri pentru modal -->
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        width: 300px;
+        text-align: center;
+    }
+
+    .btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        margin: 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .btn.cancel {
+        background-color: #f44336;
+    }
+
+    .btn.confirm {
+        background-color: #4CAF50;
+    }
+
+    .btn:hover {
+        opacity: 0.8;
+    }
+</style>
+
+<!-- Script JavaScript pentru modal -->
+<script>
+    let carIdToDelete = null;
+
+    // Afișează modalul de confirmare
+    function confirmDelete(carId) {
+    carIdToDelete = carId;
+    document.getElementById("confirmModal").style.display = "flex";
+}
+
+// Anulează acțiunea de ștergere
+document.getElementById("cancelBtn").onclick = function() {
+    document.getElementById("confirmModal").style.display = "none";
+}
+
+// Confirmă ștergerea
+document.getElementById("confirmBtn").onclick = function() {
+    if (carIdToDelete !== null) {
+        // Trimite cererea de tip POST pentru ștergerea mașinii
+        fetch(`/delete_car/${carIdToDelete}`, {
+            method: 'POST',  // Folosește metoda POST
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams()  // Trimis gol pentru a simula POST
+        })
+        .then(response => {
+            if (response.ok) {
+                // Redirecționează la dashboard după ștergere
+                window.location.href = '/dashboard';
+            } else {
+                alert('Eroare la ștergere. Încearcă din nou.');
+            }
+        })
+        .catch(error => {
+            alert('A apărut o problemă. Încearcă mai târziu.');
+        });
+    }
+}
+ // Funcția de editare
+            function editCar(carId) {
+                // Redirecționează utilizatorul către pagina de editare, incluzând ID-ul mașinii în URL
+                window.location.href = "/edit_car/" + carId;
+            }
+
+
+</script>
+</div>
+<!-- Buton de deconectare -->
+<form action="/logout" method="get" onsubmit="return confirmLogout();">
+    <button type="submit" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        background-color: #d9534f; color: white; border: none; padding: 10px 20px;
+        border-radius: 5px; font-size: 16px; cursor: pointer;">
+        Deconectare
+    </button>
+</form>
+
+<script>
+    function confirmLogout() {
+        return confirm("Sigur dorești să te deconectezi?");
+    }
+</script>
+
+
+
+
+
+    
+
+</body>
+</html>

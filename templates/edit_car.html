@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editare Număr Înmatriculare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_car.css') }}">
+
+</head>
+<body>
+    <div class="form-container">
+        <h2>Editare Număr Înmatriculare</h2>
+        <form method="POST" action="/edit_car/{{ car.id }}" id="editForm">
+            <label for="plate">Număr înmatriculare nou:</label>
+            <input type="text" id="plate" name="plate" value="{{ car.nrinmatriculare }}" required>
+
+            <input type="submit" value="Salvează modificările">
+        </form>
+        <a href="/dashboard">Înapoi la Dashboard</a>
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/edit_car.js') }}"></script>
+</body>
+</html>
