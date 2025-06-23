@@ -63,7 +63,31 @@ This project is a smart parking system developed for a university license thesis
    - Manage vehicles.
    - Monitor spots.
    - Authenticate securely with an email code.
+     
+🚀 Installation and Run Instructions
+Raspberry Pi
+# Install dependencies
+sudo apt update
+pip install opencv-python easyocr serial mysql-connector-python flask
 
+# Run the parking script
+python3 parcare.py
+
+Arduino
+Open arduino.ino in Arduino IDE.
+Select the correct board and port.
+Upload the code.
+
+Web Interface
+# Navigate to project folder
+cd webapp
+
+# Install Flask if not already installed
+pip install flask
+
+# Run the app
+python app.py
+Access web interface via: http://<raspberry-pi-ip>:5000/
 ---
 
 
